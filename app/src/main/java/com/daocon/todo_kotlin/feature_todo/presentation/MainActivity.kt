@@ -1,4 +1,4 @@
-package com.daocon.todo_kotlin
+package com.daocon.todo_kotlin.feature_todo.presentation
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -22,6 +22,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    Text(text = "Hello, Daocon!")
 
                 }
             }
