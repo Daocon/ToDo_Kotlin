@@ -55,7 +55,7 @@ object TodoModule {
 
     @Provides
     @Singleton
-    fun providesTodoRepo(db: TodoDataBase, api: TodoApi, @IoDispatcher dispatcher: CoroutineDispatcher): TodoListRepo{
+    fun providesTodoRepo(db: TodoDataBase, api: TodoApi, @IoDispatcher dispatcher: CoroutineDispatcher): TodoListRepo {
         return TodoListRepoImpl(db.dao, api, dispatcher)
     }
 }

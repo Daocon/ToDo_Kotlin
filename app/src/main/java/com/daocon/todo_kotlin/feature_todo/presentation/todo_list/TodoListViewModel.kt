@@ -9,12 +9,15 @@ import com.daocon.todo_kotlin.feature_todo.data.di.IoDispatcher
 import com.daocon.todo_kotlin.feature_todo.domain.model.TodoItem
 import com.daocon.todo_kotlin.feature_todo.domain.use_case.TodoUseCaseResult
 import com.daocon.todo_kotlin.feature_todo.domain.use_case.TodoUseCases
+import com.daocon.todo_kotlin.feature_todo.domain.util.SortingDirection
 import com.daocon.todo_kotlin.feature_todo.domain.util.TodoItemOrder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,18 +25,25 @@ class TodoListViewModel @Inject constructor(
     private val todoUseCases: TodoUseCases,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
-    private val _state = mutableStateOf(TodoListState())
+    private val _state = mutableStateOf(
+        TodoListState(
+            todoItemOrder = TodoItemOrder.Time(
+                SortingDirection.Down, true
+            )
+        )
+    )
     val state: State<TodoListState> = _state
 
     private var undoTodoItem: TodoItem? = null
     private var getTodoItemsJob: Job? = null
-    private var errorHandler = CoroutineExceptionHandler { _, e ->
+    private val errorHandler = CoroutineExceptionHandler { _, e ->
         e.printStackTrace()
         _state.value = _state.value.copy(
             error = e.message,
             isLoading = false
         )
     }
+
 
     fun onEvent(event: TodoListEvent) {
         when (event) {
@@ -46,13 +56,14 @@ class TodoListViewModel @Inject constructor(
             }
 
             is TodoListEvent.Sort -> {
-                val stateOrderAlreayMatchesEventOrder =
+                val stateOrderAlreadyMatchesEventOrder =
                     _state.value.todoItemOrder::class == event.todoItemOrder::class &&
                             _state.value.todoItemOrder.showArchived == event.todoItemOrder.showArchived &&
                             _state.value.todoItemOrder.sortingDirection == event.todoItemOrder.sortingDirection
-                if (stateOrderAlreayMatchesEventOrder) {
+                if (stateOrderAlreadyMatchesEventOrder) {
                     return
                 }
+
                 _state.value = _state.value.copy(
                     todoItemOrder = event.todoItemOrder
                 )
@@ -83,15 +94,15 @@ class TodoListViewModel @Inject constructor(
         }
     }
 
-    fun getTodoItems() {
-        getTodoItemsJob?.cancel()
+    fun getTodoItems(){
+    getTodoItemsJob?.cancel()
 
-        getTodoItemsJob = viewModelScope.launch(dispatcher + errorHandler) {
-            val result = todoUseCases.getTodoItems(
-                todoItemOrder = _state.value.todoItemOrder
-            )
-
-            when (result) {
+    getTodoItemsJob = viewModelScope.launch(dispatcher + errorHandler) {
+        val result = todoUseCases.getTodoItems(
+            todoItemOrder = _state.value.todoItemOrder
+        )
+        withContext(Dispatchers.Main) {
+            when(result){
                 is TodoUseCaseResult.Success -> {
                     _state.value = _state.value.copy(
                         todoItems = result.todoItems,
@@ -99,7 +110,6 @@ class TodoListViewModel @Inject constructor(
                         isLoading = false
                     )
                 }
-
                 is TodoUseCaseResult.Error -> {
                     _state.value = _state.value.copy(
                         error = TodoListStrings.CANT_GET_TODOS,
@@ -109,4 +119,5 @@ class TodoListViewModel @Inject constructor(
             }
         }
     }
+}
 }

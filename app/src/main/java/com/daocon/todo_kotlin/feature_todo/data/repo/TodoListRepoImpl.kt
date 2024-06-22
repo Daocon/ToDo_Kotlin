@@ -73,21 +73,22 @@ class TodoListRepoImpl(
     }
 
     override suspend fun deleteTodoItem(todo: TodoItem) {
-        try {
+        try{
             val response = api.deleteTodo(todo.id)
-            if (response.isSuccessful) {
-                Log.d("API_DELETE", "Response successful")
-            } else {
-                Log.d("API_DELETE", "Response unSuccessful")
-                Log.d("API_DELETE", response.message())
+            if(response.isSuccessful){
+                Log.i("API_DELETE","Response Successful")
+            }else{
+                Log.i("API_DELETE","Response Unsuccessful")
+                Log.i("API_DELETE",response.message())
             }
-        } catch (e: Exception) {
+        }catch (e: Exception){
             when(e){
                 is UnknownHostException, is ConnectException, is HttpException -> {
                     Log.e("HTTP", "Error: Could not delete")
-                } else -> throw e
+                }else -> throw e
             }
         }
+        dao.deleteTodoItem(todo.toLocalTodoItem())
     }
 
     override suspend fun updateTodoItem(todo: TodoItem) {

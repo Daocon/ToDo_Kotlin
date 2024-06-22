@@ -27,4 +27,14 @@ object ContentDescriptions {
     const val SORTING_MENU = "Sorting Menu"
     const val BACKGROUND_IMAGE = "Background Image"
     const val LOADING_INDICATOR = "Loading Indicator"
+    const val SAVE_TODO = "Save Todo"
+    const val BACK = "Back"
+}
+
+object NewUpdateStrings {
+    const val SAVE_ERROR = "Error: Could not save Todo Item"
+    const val CONFIRM_DELETE = "Are you sure you want to delte this todo item?"
+    const val YES = "Yes"
+    const val TITLE_HINT = "Title..."
+    const val DESCRIPTION_HINT = "Description..."
 }

@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -22,8 +23,9 @@ import androidx.compose.ui.unit.sp
 import com.daocon.todo_kotlin.core.presentation.components.ArchiveButton
 import com.daocon.todo_kotlin.core.presentation.components.CompleteButtons
 import com.daocon.todo_kotlin.core.presentation.components.DeleteButton
-import com.daocon.todo_kotlin.core.presentation.components.getTodoColor
+import com.daocon.todo_kotlin.core.presentation.components.getTodoColors
 import com.daocon.todo_kotlin.feature_todo.domain.model.TodoItem
+import com.daocon.todo_kotlin.ui.theme.ToDo_KotlinTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,41 +35,41 @@ fun TodoItemCard(
     onDeleteClick: () -> Unit,
     onCompleteClick: () -> Unit,
     onArchiveClick: () -> Unit,
-    onCardClick: () -> Unit
-) {
-    val todoColors = getTodoColor(todo = todo)
+    onCardClick: () -> Unit,
+){
+    val todoColors = getTodoColors(todo = todo)
 
     Card(
-        onClick = onCardClick,
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = todoColors.backGroundColor)
+        onClick = onCardClick,
+        colors = CardDefaults.cardColors(containerColor = todoColors.backgroundColor)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Start
-        ) {
+        ){
             CompleteButtons(onCompleteClick, todoColors.checkColor, todo.completed)
             Text(
                 text = todo.title,
-                style = MaterialTheme.typography.headlineLarge,
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = Bold,
                 color = todoColors.textColor,
                 fontSize = 32.sp,
-                fontWeight = FontWeight.Bold,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
         }
-        Row(
+        Row (
             verticalAlignment = Alignment.Top
-        ) {
+        ){
             Column(
-                modifier = Modifier
+                modifier = modifier
                     .fillMaxWidth()
                     .padding(start = 8.dp)
                     .weight(1f),
                 verticalArrangement = Arrangement.Top
-            ) {
+            ){
                 Text(
                     text = todo.description,
                     style = MaterialTheme.typography.bodyLarge,
@@ -94,19 +96,21 @@ fun TodoItemCard(
 
 @Preview
 @Composable
-fun TodoItemCardPreview() {
-    TodoItemCard(
-        todo = TodoItem(
-            id = 1,
-            title = "Titlekjhkhu",
-            timestamp = 1223445,
-            description = "Description",
-            completed = true,
-            archived = false
-        ),
-        onDeleteClick = {},
-        onCompleteClick = {},
-        onArchiveClick = {},
-        onCardClick = {}
-    )
+fun TodoItemCardPreview(){
+    ToDo_KotlinTheme {
+        TodoItemCard(
+            TodoItem(
+                title = "Subscribe to my channel & like this video ",
+                description = "Keep learning Kotlin so that you can learn how to make really cool apps",
+                timestamp = 11234565,
+                completed = true,
+                archived = false,
+                id = 0
+            ),
+            onDeleteClick = {},
+            onCardClick = {},
+            onArchiveClick = {},
+            onCompleteClick = {}
+        )
+    }
 }

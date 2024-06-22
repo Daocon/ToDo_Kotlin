@@ -8,6 +8,5 @@ interface TodoListRepo {
     suspend fun getSingleTodoItemById(id: Int): TodoItem?
     suspend fun addTodoItem(todo: TodoItem)
     suspend fun deleteTodoItem(todo: TodoItem)
-
     suspend fun updateTodoItem(todo: TodoItem)
 }

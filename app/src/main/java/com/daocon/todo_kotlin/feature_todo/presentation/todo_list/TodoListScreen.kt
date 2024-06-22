@@ -2,12 +2,14 @@ package com.daocon.todo_kotlin.feature_todo.presentation.todo_list
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -42,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -55,60 +58,63 @@ import com.daocon.todo_kotlin.core.util.ContentDescriptions
 import com.daocon.todo_kotlin.core.util.TodoListStrings
 import com.daocon.todo_kotlin.feature_todo.presentation.todo_list.components.SortingDrawerOptions
 import com.daocon.todo_kotlin.feature_todo.presentation.todo_list.components.TodoItemCard
+import com.daocon.todo_kotlin.feature_todo.presentation.util.Screen
 import kotlinx.coroutines.launch
+
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TodoListScreen(
     navController: NavController,
     viewModel: TodoListViewModel = hiltViewModel()
-) {
+){
     val state = viewModel.state.value
-    val snackbarHostState = remember {
-        SnackbarHostState()
-    }
+    val snackbarHostState = remember { SnackbarHostState() }
+
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
-    val configuaration = LocalConfiguration.current
-    val isPortrait = configuaration.orientation == Configuration.ORIENTATION_PORTRAIT
+    val configuration = LocalConfiguration.current
+    val isPortrait = configuration.orientation == Configuration.ORIENTATION_PORTRAIT
 
-    val backgroundImage = if(isPortrait) {
+    val backgroundImage = if(isPortrait){
         R.drawable.background_portrait
-    } else {
+    }else{
         R.drawable.background_landscape
     }
 
-    LaunchedEffect(key1 = true) {
+    LaunchedEffect(key1 = true){
         viewModel.getTodoItems()
     }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            ModalDrawerSheet {
-                Text(
-                    text = TodoListStrings.SORT_BY,
-                    modifier = Modifier.padding(16.dp),
-                    fontSize = 34.sp,
-                    lineHeight = 38.sp
-                )
-                Divider()
-                SortingDrawerOptions(
-                    todoItemOrder = state.todoItemOrder,
-                    onOrderChange = { order ->
-                        viewModel.onEvent(TodoListEvent.Sort(order))
-                    })
+            Box(modifier = Modifier.fillMaxWidth(0.65f)){
+                ModalDrawerSheet {
+                    Text(
+                        text = TodoListStrings.SORT_BY,
+                        modifier = Modifier.padding(16.dp),
+                        fontSize = 34.sp,
+                        lineHeight = 38.sp
+                    )
+                    Divider()
+                    SortingDrawerOptions(
+                        todoItemOrder = state.todoItemOrder,
+                        onOrderChange = { order ->
+                            viewModel.onEvent(TodoListEvent.Sort(order))
+                        })
+                }
             }
         }
     ) {
         Scaffold(
             floatingActionButton = {
                 FloatingActionButton(onClick = {
-
+                    navController.navigate(Screen.TodoNewUpdateScreen.route)
                 },
                     shape = CircleShape,
-                    containerColor = MaterialTheme.colorScheme.primary,
+                    containerColor = MaterialTheme.colorScheme.primary
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
@@ -125,7 +131,7 @@ fun TodoListScreen(
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             style = MaterialTheme.typography.headlineLarge,
-                            color = MaterialTheme.colorScheme.onPrimary,
+                            color = MaterialTheme.colorScheme.onPrimary
                         )
                     },
                     colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
@@ -137,28 +143,28 @@ fun TodoListScreen(
                     ),
                     navigationIcon = {},
                     actions = {
-                        IconButton(onClick = {
-                            scope.launch { drawerState.open() }
-                        }) {
+                        IconButton(
+                            onClick = {
+                                scope.launch { drawerState.open() }
+                            }
+                        ) {
                             Icon(
                                 imageVector = Icons.Filled.Menu,
                                 contentDescription = ContentDescriptions.SORTING_MENU
                             )
                         }
                     },
-                    scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState()),
+                    scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
                 )
             },
-            snackbarHost = {
-                SnackbarHost(hostState = snackbarHostState)
-            }
-        ) { paddingValues ->
+            snackbarHost = { SnackbarHost(hostState = snackbarHostState)}
+        ) { padding ->
             Box(
                 contentAlignment = Alignment.TopStart,
                 modifier = Modifier
                     .fillMaxSize()
                     .background(color = MaterialTheme.colorScheme.background)
-            ) {
+            ){
                 Image(
                     painter = painterResource(id = backgroundImage),
                     contentDescription = ContentDescriptions.BACKGROUND_IMAGE,
@@ -174,12 +180,15 @@ fun TodoListScreen(
                             .fillMaxSize()
                             .padding(horizontal = 12.dp)
                             .padding(top = 64.dp)
-                    ) {
-                        items(state.todoItems) { todo ->
+                    ){
+                        items(state.todoItems){todo ->
                             TodoItemCard(
                                 todo = todo,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(4.dp),
                                 onDeleteClick = {
-                                                viewModel.onEvent(TodoListEvent.Delete(todo))
+                                    viewModel.onEvent(TodoListEvent.Delete(todo))
                                     scope.launch {
                                         val undo = snackbarHostState.showSnackbar(
                                             message = TodoListStrings.TODO_ITEM_DELETED,
@@ -197,7 +206,9 @@ fun TodoListScreen(
                                     viewModel.onEvent(TodoListEvent.ToggleArchived(todo))
                                 },
                                 onCardClick = {
-
+                                    navController.navigate(
+                                        Screen.TodoNewUpdateScreen.route + "?todoId=${todo.id}"
+                                    )
                                 }
                             )
                         }
@@ -232,4 +243,6 @@ fun TodoListScreen(
             }
         }
     }
+
+
 }

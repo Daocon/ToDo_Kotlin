@@ -42,44 +42,33 @@ class TodoUseCases @Inject constructor(
     }
 
     suspend fun getTodoItems(
-        todoItemOrder: TodoItemOrder = TodoItemOrder.Time(SortingDirection.Down, true)
-    ): TodoUseCaseResult {
+        todoItemOrder: TodoItemOrder,// = TodoItemOrder.Time(SortingDirection.Down, true)
+    ): TodoUseCaseResult{
         var todos = repo.getAllTodoFromLocalCache()
-        if (todos.isEmpty()) {
+
+        if(todos.isEmpty()){
             todos = repo.getAllTodo()
         }
 
-        val filteredTodos = if (todoItemOrder.showArchived) {
+        val filteredTodos = if (todoItemOrder.showArchived){
             todos
         } else {
-            todos.filter { !it.archived }
+            todos.filter{ !it.archived }
         }
 
         return when (todoItemOrder.sortingDirection){
             is SortingDirection.Down -> {
-                when (todoItemOrder){
-                    is TodoItemOrder.Title -> {
-                        TodoUseCaseResult.Success(filteredTodos.sortedByDescending { it.title.lowercase() })
-                    }
-                    is TodoItemOrder.Time -> {
-                        TodoUseCaseResult.Success(filteredTodos.sortedByDescending { it.timestamp })
-                    }
-                    is TodoItemOrder.Completed -> {
-                        TodoUseCaseResult.Success(filteredTodos.sortedByDescending { it.completed })
-                    }
+                when (todoItemOrder) {
+                    is TodoItemOrder.Title -> TodoUseCaseResult.Success(filteredTodos.sortedByDescending { it.title.lowercase() })
+                    is TodoItemOrder.Time -> TodoUseCaseResult.Success(filteredTodos.sortedByDescending { it.timestamp })
+                    is TodoItemOrder.Completed -> TodoUseCaseResult.Success(filteredTodos.sortedByDescending { it.completed })
                 }
             }
             is SortingDirection.Up -> {
-                when (todoItemOrder){
-                    is TodoItemOrder.Title -> {
-                        TodoUseCaseResult.Success(filteredTodos.sortedBy { it.title.lowercase() })
-                    }
-                    is TodoItemOrder.Time -> {
-                        TodoUseCaseResult.Success(filteredTodos.sortedBy { it.timestamp })
-                    }
-                    is TodoItemOrder.Completed -> {
-                        TodoUseCaseResult.Success(filteredTodos.sortedBy { it.completed })
-                    }
+                when (todoItemOrder) {
+                    is TodoItemOrder.Title -> TodoUseCaseResult.Success(filteredTodos.sortedBy { it.title.lowercase() })
+                    is TodoItemOrder.Time -> TodoUseCaseResult.Success(filteredTodos.sortedBy { it.timestamp })
+                    is TodoItemOrder.Completed -> TodoUseCaseResult.Success(filteredTodos.sortedBy { it.completed })
                 }
             }
         }

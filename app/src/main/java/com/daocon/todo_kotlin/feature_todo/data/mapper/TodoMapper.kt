@@ -4,7 +4,7 @@ import com.daocon.todo_kotlin.feature_todo.data.local.dto.LocalTodoItem
 import com.daocon.todo_kotlin.feature_todo.data.remote.dto.RemoteTodoItem
 import com.daocon.todo_kotlin.feature_todo.domain.model.TodoItem
 
-fun TodoItem.toLocalTodoItem(): LocalTodoItem {
+fun TodoItem.toLocalTodoItem(): LocalTodoItem{
     return LocalTodoItem(
         title = title,
         description = description,
@@ -26,7 +26,7 @@ fun TodoItem.toRemoteTodoItem(): RemoteTodoItem {
     )
 }
 
-fun LocalTodoItem.toTodoItem(): TodoItem {
+fun LocalTodoItem.toTodoItem(): TodoItem{
     return TodoItem(
         title = title,
         description = description,
@@ -37,7 +37,7 @@ fun LocalTodoItem.toTodoItem(): TodoItem {
     )
 }
 
-fun LocalTodoItem.toRemoteTodoItem(): RemoteTodoItem {
+fun LocalTodoItem.toRemoteTodoItem(): RemoteTodoItem{
     return RemoteTodoItem(
         title = title,
         description = description,
@@ -48,7 +48,7 @@ fun LocalTodoItem.toRemoteTodoItem(): RemoteTodoItem {
     )
 }
 
-fun RemoteTodoItem.toTodoItem(): TodoItem {
+fun RemoteTodoItem.toTodoItem(): TodoItem{
     return TodoItem(
         title = title,
         description = description,
@@ -59,7 +59,7 @@ fun RemoteTodoItem.toTodoItem(): TodoItem {
     )
 }
 
-fun RemoteTodoItem.toLocalTodoItem(): LocalTodoItem {
+fun RemoteTodoItem.toLocalTodoItem(): LocalTodoItem{
     return LocalTodoItem(
         title = title,
         description = description,
@@ -70,7 +70,7 @@ fun RemoteTodoItem.toLocalTodoItem(): LocalTodoItem {
     )
 }
 
-fun List<TodoItem>.toLocalTodoItemList(): List<LocalTodoItem> {
+fun List<TodoItem>.toLocalTodoItemList(): List<LocalTodoItem>{
     return this.map {todo ->
         LocalTodoItem(
             title = todo.title,
@@ -83,7 +83,7 @@ fun List<TodoItem>.toLocalTodoItemList(): List<LocalTodoItem> {
     }
 }
 
-fun List<TodoItem>.toRemoteTodoItemList(): List<RemoteTodoItem> {
+fun List<TodoItem>.toRemoteTodoItemList(): List<RemoteTodoItem>{
     return this.map {todo ->
         RemoteTodoItem(
             title = todo.title,
@@ -96,7 +96,7 @@ fun List<TodoItem>.toRemoteTodoItemList(): List<RemoteTodoItem> {
     }
 }
 
-fun List<LocalTodoItem>.toTodoItemListFromLocal(): List<TodoItem> {
+fun List<LocalTodoItem>.toTodoItemListFromLocal(): List<TodoItem>{
     return this.map {todo ->
         TodoItem(
             title = todo.title,
@@ -109,7 +109,7 @@ fun List<LocalTodoItem>.toTodoItemListFromLocal(): List<TodoItem> {
     }
 }
 
-fun List<LocalTodoItem>.toRemoteTodoItemListFromLocal(): List<RemoteTodoItem> {
+fun List<LocalTodoItem>.toRemoteTodoItemListFromLocal(): List<RemoteTodoItem>{
     return this.map {todo ->
         RemoteTodoItem(
             title = todo.title,
@@ -122,7 +122,7 @@ fun List<LocalTodoItem>.toRemoteTodoItemListFromLocal(): List<RemoteTodoItem> {
     }
 }
 
-fun List<RemoteTodoItem>.toTodoItemListFromRemote(): List<TodoItem> {
+fun List<RemoteTodoItem>.toTodoItemListFromRemote(): List<TodoItem>{
     return this.map {todo ->
         TodoItem(
             title = todo.title,
@@ -135,7 +135,7 @@ fun List<RemoteTodoItem>.toTodoItemListFromRemote(): List<TodoItem> {
     }
 }
 
-fun List<RemoteTodoItem>.toLocalTodoItemListFromRemote(): List<LocalTodoItem> {
+fun List<RemoteTodoItem>.toLocalTodoItemListFromRemote(): List<LocalTodoItem>{
     return this.map {todo ->
         LocalTodoItem(
             title = todo.title,
