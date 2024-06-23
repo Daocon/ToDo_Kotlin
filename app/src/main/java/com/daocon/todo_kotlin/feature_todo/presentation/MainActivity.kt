@@ -61,6 +61,15 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
                         ) {
+
+                            // Log the todoId
+                            val todoId = it.arguments?.getInt("todoId")
+                            if (todoId != null) {
+                                println("TodoId Home Activity: $todoId")
+                            }else{
+                                println("TodoId: null")
+                            }
+
                             TodoNewUpdateScreen(navController = navController)
 
                         }

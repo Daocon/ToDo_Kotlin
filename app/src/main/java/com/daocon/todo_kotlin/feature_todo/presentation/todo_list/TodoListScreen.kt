@@ -2,6 +2,7 @@ package com.daocon.todo_kotlin.feature_todo.presentation.todo_list
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -206,6 +207,7 @@ fun TodoListScreen(
                                     viewModel.onEvent(TodoListEvent.ToggleArchived(todo))
                                 },
                                 onCardClick = {
+                                    Log.d("TodoListScreen", "TodoId: ${todo.id}")
                                     navController.navigate(
                                         Screen.TodoNewUpdateScreen.route + "?todoId=${todo.id}"
                                     )

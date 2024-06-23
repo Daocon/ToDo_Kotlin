@@ -1,5 +1,6 @@
 package com.daocon.todo_kotlin.feature_todo.presentation.todo_new_update
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
@@ -11,9 +12,11 @@ import com.daocon.todo_kotlin.feature_todo.domain.use_case.TodoUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -47,23 +50,26 @@ class TodoNewUpdateViewModel @Inject constructor(
     init {
         savedStateHandle.get<Int>("todoId")?.let { id ->
             if(id != -1){
+                Log.d("TodoId", "TodoId: $id")
                 viewModelScope.launch(dispatcher + errorHandler){
                     todoUseCases.getTodoItemById(id)?.also { todo ->
                         currentTodoId = id
-                        _state.value = _state.value.copy(
-                            todo = todo,
-                            isLoading = false,
-                            isTitleHintVisible = todo.title.isBlank(),
-                            isDescriptionHintVisible = todo.description.isBlank()
-                        )
+                        withContext(Dispatchers.Main) {
+                            _state.value = _state.value.copy(
+                                todo = todo,
+                                isLoading = false,
+                                isTitleHintVisible = todo.title.isBlank(),
+                                isDescriptionHintVisible = todo.description.isBlank()
+                            )
+                        }
                     }
                 }
             }else{
+                Log.d("TodoId", "TodoId: null")
                 _state.value = _state.value.copy(
                     isLoading = false
                 )
             }
-
         }
     }
 
